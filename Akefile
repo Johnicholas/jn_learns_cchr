@@ -1,0 +1,44 @@
+leq: leq.c cchr_csm.h dcls.h lookup3.h lookup3.c ht_cuckoo.h hmap.h htl_cuckoo.h logical.h
+	./cc leq.c -o leq
+
+leq.c: cchr leq.cchr
+	./cchr leq.cchr
+
+cchr: parser.o lexer.o analyse.o parsestr.o main.o output.o codegen.o gio.o sugar_log.o cc
+	./cc parser.o lexer.o analyse.o parsestr.o main.o output.o codegen.o gio.o sugar_log.o -lm -o cchr
+
+cchr.tab.c: cchr.y cc
+	bison -dv -o cchr.tab.c cchr.y
+
+parser.o: cchr.tab.c cc
+	./cc -I . cchr.tab.c -c -o parser.o
+
+cchr.lex.c: cchr.lex cc
+	flex -o cchr.lex.c cchr.lex
+
+lexer.o: cchr.lex.c cc
+	./cc -I . cchr.lex.c -c -o lexer.o
+
+analyse.o: analyse.c cc
+	./cc analyse.c -c -o analyse.o
+
+parsestr.o: parsestr.c cc
+	./cc parsestr.c -c -o parsestr.o
+
+main.o: main.c cc
+	./cc main.c -c -o main.o
+
+output.o: output.c cc
+	./cc output.c -c -o output.o
+
+codegen.o: codegen.c cc
+	./cc codegen.c -c -o codegen.o
+
+gio.o: gio.c cc
+	./cc gio.c -c -o gio.o
+
+sugar_log.o: sugar_log.c cc
+	./cc sugar_log.c -c -o sugar_log.o
+
+clean:
+	rm cchr *.o *.lex.c *.tab.c leq.c leq
